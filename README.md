@@ -1,6 +1,4 @@
 # BitsOfBeats
-
-## Bits of Beats
-# 3rd year project - University of Manchester
-# author - Octavian Taranu Toma
-# project superviser - Toby Howard
+## 3rd year project - University of Manchester
+## author - Octavian Taranu Toma
+## project superviser - Toby Howard
