@@ -1,0 +1,6 @@
+package-lock.json
+trainer.py
+train-data
+trainLog.txt
+.vscode
+node_modules
