@@ -1,0 +1,10 @@
+{
+    "type": "MusicRNN",
+    "dataConverter": {
+      "type": "DrumsConverter",
+      "args": {
+        "minPitch": 48,
+        "maxPitch": 83
+      }
+    }
+  }

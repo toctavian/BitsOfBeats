@@ -1,23 +1,31 @@
 var canvas;
 
 var curve = 0;
+var time;
 var deviation = 0;
 var fade = 255;
-const drum_rnn = new mm.MusicRNN('https://storage.googleapis.com/download.magenta.tensorflow.org/tfjs_checkpoints/music_rnn/drum_kit_rnn');
+var drum_rnn = new mm.MusicRNN('/checkpoints/soul');
+// const drum_rnn = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn');
+var step = 1;
+
+var selectedGenre = 0;
 var drumSamples;
 var player = new Tone.Player({
   retrigger : true
 }).toMaster();
 
 var pattern = [];
+var wave = [];
 
 var loading = true;
 var loadingRoation = 0;
 var isPlaying = false;
 
 function playPauseDream() {
-  if(isPlaying) 
+  if(isPlaying) {
     Tone.Transport.pause();
+    updateSequence();
+  }
   else
     playDream();
 
@@ -25,45 +33,19 @@ function playPauseDream() {
 }
 
 function playDream() {
-  
-
-  console.log(pattern);
   var drumPart = new Tone.Part(function(time, value){
     drumSamples.get(value.note).start();
+    if (value.note == 36)
+      wave[0] = {r: 255, g: 255, b: 255};
   }, pattern).start("0");
   drumPart.loop = true;
-  ////////////////////////////////////////////////////////////////////
 
-  // console.log("Here");
-
-  
-  // var part = new Tone.Part(function(time, note){
-  //     console.log(tone);
-  //     console.log("----");
-  //     console.log(time);
-
-  //     drumSamples.triggerAttackRelease(note, "8n", time);
-  // }, [["0:0:2", melody[0].note], ["0:1", melody[1].note], ["0:1:3", melody[2].note]]).start(0);
-  
-  ////////////////////////////////////////////////////////////////////////
-  // var loop = new Tone.Sequence(function(time, note){
-    
-  //   for (var i = 0; i < melody.length; i++) {
-  //     for (var y = 0; Y < melody[i].note.length; y++) {
-  //       var vel = Math.random() * 0.5 + 0.5;
-  //       drumSamples.get(melody[i].note[y]).triggerAttackRelease(time);
-  //     }
-  //   }
-      
-  // }, "16n");
-
-  Tone.Transport.bpm.value = 60;
+  Tone.Transport.bpm.value = 70;
   Tone.Transport.start("+0.1");
 }
 
 function updateSequence() {
-  const sequenceInfo = {notes:[], quantizationInfo: {stepsPerQuarter: 4}};
-  
+  const sequenceInfo = {notes:[42], quantizationInfo: {stepsPerQuarter: 4}};
   drum_rnn.continueSequence(sequenceInfo, 16, 1.3).then((dream) => {
     for (var i = 0; i < dream.notes.length; i++) {
       dream.notes[i].quantizedEndStep
@@ -76,14 +58,43 @@ function updateSequence() {
 
       loading = false;
     }
+    console.log(pattern);
   });
+}
+
+function soul() {
+  drum_rnn = new mm.MusicRNN('/checkpoints/soul');
+  selectedGenre = 0;
+  updateSequence();
+}
+
+function rap() {
+  drum_rnn = new mm.MusicRNN('/checkpoints/rap');
+  selectedGenre = 1;
+  updateSequence();
+}
+
+function rnb() {
+  drum_rnn = new mm.MusicRNN('/checkpoints/rnb');
+  selectedGenre = 2;
+  updateSequence();
+}
+
+function neoSoul() {
+  drum_rnn = new mm.MusicRNN('/checkpoints/neo-soul');
+  selectedGenre = 3;
+  updateSequence();
 }
 
 
 function setup() {
   canvas = createCanvas(innerWidth, innerHeight);  
-  frameRate(30);
+  // frameRate(30);
   curve = 0;
+
+  console.log(wave);
+
+  time = 0;
   
   drumSamples = new Tone.Players({
     36 : '/sounds/drum-kits/dubstep/kick.mp3',
@@ -101,22 +112,42 @@ function setup() {
 
 function draw() { 
   background(174,220,192);
+  translate(innerWidth/2, innerHeight/2);
+
+  if (wave.length <  200) {
+    wave.unshift({
+      r: 0,
+      g: 0,
+      b: 0
+    });
+  } else {
+    wave.pop();
+    wave.unshift({r:0,g:0,b:0});
+  }
+
+  for(i=1;i<wave.length;i++) {
+    drawPixelCircle(i, 25, wave[i].r, wave[i].g, wave[i].b);
+  }
+  
+  time++;
+  if (time == 150) time=1;
+
   
   if(loading) {
     noFill();
     
     stroke(255);
     strokeWeight(4);
-    arc(innerWidth/2, innerHeight/2, 100, 100, 5*PI/3 + loadingRoation, PI/3 + loadingRoation);
+    arc(0, 0, 100, 100, 5*PI/3 + loadingRoation, PI/3 + loadingRoation);
 
     strokeWeight(1);
-    arc(innerWidth/2, innerHeight/2, 90, 90, 5*PI/3 + loadingRoation * (3/2), PI/3 + loadingRoation * (3/2));
+    arc(0, 0, 90, 90, 5*PI/3 + loadingRoation * (3/2), PI/3 + loadingRoation * (3/2));
     loadingRoation += PI/20;
     if(loadingRoation == 3*TWO_PI) loadingRoation = 0;
   } else {
     noStroke();
     fill(255);
-    ellipse(innerWidth/2, innerHeight/2, 100, 100);
+    ellipse(0, 0, 100, 100);
 
     fill(174,220,192);
     // textFont(font);
@@ -124,34 +155,157 @@ function draw() {
     textAlign(CENTER, CENTER);
     
     if (isPlaying) {
-      text("Stop", innerWidth/2, innerHeight/2);
+      text("Stop", 0, 0);
     } else {
-      text("Play", innerWidth/2, innerHeight/2);
+      text("Play", 0, 0);
     }
+
+    textSize(20);
+
+    if (selectedGenre == 0) {
+      fill(174,220,192);
+      stroke(255);
+      strokeWeight(2);
+      rect(0 - 350, 0 + 200, 100, 30);
+      fill(255);
+      noStroke();
+      text("Soul", 0 - 300, 0 + 215);
+    } else {
+      fill(255);
+      rect(0 - 350, 0 + 200, 100, 30);
+      fill(174,220,192);
+      text("Soul", 0 - 300, 0 + 215);
+    }
+
+    if (selectedGenre == 1) {
+      fill(174,220,192);
+      stroke(255);
+      strokeWeight(2);
+      rect(0 - 150, 0 + 200, 100, 30);
+      fill(255);
+      noStroke();
+      text("Rap", 0 - 100, 0 + 215);
+    } else {
+      fill(255);
+      rect(0 - 150, 0 + 200, 100, 30);
+      fill(174,220,192);
+      text("Rap", 0 - 100, 0 + 215);
+    }
+
+    if (selectedGenre == 2) {
+      fill(174,220,192);
+      stroke(255);
+      strokeWeight(2);
+      rect(0 + 50, 0 + 200, 100, 30);
+      fill(255);
+      noStroke();
+      text("R&B", 0 + 100, 0 + 215);
+    } else {
+      fill(255);
+      rect(0 + 50, 0 + 200, 100, 30);
+      fill(174,220,192);
+      text("R&B", 0 + 100, 0 + 215);
+    }
+
+    if (selectedGenre == 3) {
+      fill(174,220,192);
+      stroke(255);
+      strokeWeight(2);
+      rect(0 + 250, 0 + 200, 100, 30);
+      fill(255);
+      noStroke();
+      text("Neo-Soul", 0 + 300, 0 + 215);
+    } else {
+      fill(255);
+      rect(0 + 250, 0 + 200, 100, 30);
+      fill(174,220,192);
+      text("Neo-Soul", 0 + 300, 0 + 215);
+    }
+
+    
+    
+    drawAxis();
   }
-  // if(deviation < curve) {
-  //   deviation = curve;
-  // } else {
-  //   deviation = deviation - (deviation - curve)/100;
-  // }
+}
 
-  // if (deviation <= 200 && fade !=0) fade-=1.5;
-  // curve = fft.getEnergy("bass") * 2;
+function drawAxis() {
+  fill(255,0,0);
+  line(0, 0, innerWidth, 0);
+  fill(0,0,255);
+  line(0, 0, 0, innerHeight);
+}
 
-  // noStroke();
-  // fill(123, 211, 137, fade);
-  // ellipse(innerWidth/2, innerHeight/2, deviation, deviation);
+function drawPixelCircle(radius, boxSize, r, g, b) {
+  fill(r, g, b);
 
-  // stroke(123, 211, 137);
-  // fill(56,288,174);
-  // ellipse(innerWidth/2,innerHeight/2,curve,curve);
-} 
+  var max = 1 + 2 * (radius - 1);
+
+  var a = max;
+  var b = 1;
+  for (level = 1; level <= radius; level++)
+  {
+    rect(0+a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
+    rect(0-a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
+    rect(0-a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
+    rect(0+a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
+    a-=2; b+=2;
+  }
+
+  wave[radius] = {r, g, b};
+}
 
 // When the user clicks the mouse
 function mousePressed() {
 
-  var d = dist(mouseX, mouseY, innerWidth/2, innerHeight/2);
+  var bound_top;
+  var bound_bot;
+  var bound_left;
+  var bound_right;
+
+  mouseX = mouseX - innerWidth/2;
+  mouseY = mouseY - innerHeight/2
+
+  var d = dist(mouseX, mouseY, 0, 0);
   if (d < 50 && !loading) {
     playPauseDream();
   }
+
+  bound_top = 0 + 200;
+  bound_bot = 0 + 230;
+  bound_left = 0 - 350;
+  bound_right = 0 - 250;
+  if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
+    console.log("soul");
+    soul();
+  }
+
+  bound_top = 0 + 200;
+  bound_bot = 0 + 230;
+  bound_left = 0 - 150;
+  bound_right = 0 - 50;
+  if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
+    console.log("rap");
+    rap();
+  }
+
+  bound_top = 0 + 200;
+  bound_bot = 0 + 230;
+  bound_left = 0 + 50;
+  bound_right = 0 + 150;
+  if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
+    console.log("rnb");
+    rnb();
+  }
+
+  bound_top = 0 + 200;
+  bound_bot = 0 + 230;
+  bound_left = 0 + 250;
+  bound_right = 0 + 350;
+  if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
+    console.log("neo-soul");
+    neoSoul();
+  }
+
+  console.log("mouseX: " + mouseX + "; mouseY: " + mouseY + ";");
+  console.log("bound_left: " + bound_left + "; bound_right: " + bound_right + "; bound_top: " + bound_top + "; bound_bot: " + bound_bot + ";");
 }
