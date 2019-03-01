@@ -1,5 +1,7 @@
 var canvas;
 
+const cubeSize = 25;
+
 var curve = 0;
 var time;
 var deviation = 0;
@@ -26,21 +28,24 @@ function playPauseDream() {
     Tone.Transport.pause();
     updateSequence();
   }
-  else
+  else {
     playDream();
+  }
 
   isPlaying = !isPlaying;
 }
 
 function playDream() {
+  console.log("playDream");
   var drumPart = new Tone.Part(function(time, value){
     drumSamples.get(value.note).start();
+    console.log(value.note);
     if (value.note == 36)
       wave[0] = {r: 255, g: 255, b: 255};
   }, pattern).start("0");
   drumPart.loop = true;
 
-  Tone.Transport.bpm.value = 70;
+  Tone.Transport.bpm.value = 60;
   Tone.Transport.start("+0.1");
 }
 
@@ -88,8 +93,8 @@ function neoSoul() {
 
 
 function setup() {
-  canvas = createCanvas(innerWidth, innerHeight);  
-  // frameRate(30);
+  canvas = createCanvas(innerWidth, innerHeight, WEBGL);  
+  frameRate(30);
   curve = 0;
 
   console.log(wave);
@@ -107,14 +112,15 @@ function setup() {
   }, function() {
     console.log(drumSamples);
     updateSequence();
+    playPauseDream();
   }).toMaster();
 }
 
 function draw() { 
   background(174,220,192);
-  translate(innerWidth/2, innerHeight/2);
+  ambientLight(0, 0, 0);
 
-  if (wave.length <  200) {
+  if (wave.length <  innerWidth/cubeSize) {
     wave.unshift({
       r: 0,
       g: 0,
@@ -130,7 +136,7 @@ function draw() {
   }
   
   time++;
-  if (time == 150) time=1;
+  if (time == innerWidth/cubeSize) time=1;
 
   
   if(loading) {
@@ -145,6 +151,8 @@ function draw() {
     loadingRoation += PI/20;
     if(loadingRoation == 3*TWO_PI) loadingRoation = 0;
   } else {
+    translate(0, 0, 200);
+
     noStroke();
     fill(255);
     ellipse(0, 0, 100, 100);
@@ -155,9 +163,9 @@ function draw() {
     textAlign(CENTER, CENTER);
     
     if (isPlaying) {
-      text("Stop", 0, 0);
+      // text("Stop", 0, 0);
     } else {
-      text("Play", 0, 0);
+      // text("Play", 0, 0);
     }
 
     textSize(20);
@@ -169,12 +177,12 @@ function draw() {
       rect(0 - 350, 0 + 200, 100, 30);
       fill(255);
       noStroke();
-      text("Soul", 0 - 300, 0 + 215);
+      // text("Soul", 0 - 300, 0 + 215);
     } else {
       fill(255);
       rect(0 - 350, 0 + 200, 100, 30);
       fill(174,220,192);
-      text("Soul", 0 - 300, 0 + 215);
+      // text("Soul", 0 - 300, 0 + 215);
     }
 
     if (selectedGenre == 1) {
@@ -184,12 +192,12 @@ function draw() {
       rect(0 - 150, 0 + 200, 100, 30);
       fill(255);
       noStroke();
-      text("Rap", 0 - 100, 0 + 215);
+      // text("Rap", 0 - 100, 0 + 215);
     } else {
       fill(255);
       rect(0 - 150, 0 + 200, 100, 30);
       fill(174,220,192);
-      text("Rap", 0 - 100, 0 + 215);
+      // text("Rap", 0 - 100, 0 + 215);
     }
 
     if (selectedGenre == 2) {
@@ -199,12 +207,12 @@ function draw() {
       rect(0 + 50, 0 + 200, 100, 30);
       fill(255);
       noStroke();
-      text("R&B", 0 + 100, 0 + 215);
+      // text("R&B", 0 + 100, 0 + 215);
     } else {
       fill(255);
       rect(0 + 50, 0 + 200, 100, 30);
       fill(174,220,192);
-      text("R&B", 0 + 100, 0 + 215);
+      // text("R&B", 0 + 100, 0 + 215);
     }
 
     if (selectedGenre == 3) {
@@ -214,18 +222,18 @@ function draw() {
       rect(0 + 250, 0 + 200, 100, 30);
       fill(255);
       noStroke();
-      text("Neo-Soul", 0 + 300, 0 + 215);
+      // text("Neo-Soul", 0 + 300, 0 + 215);
     } else {
       fill(255);
       rect(0 + 250, 0 + 200, 100, 30);
       fill(174,220,192);
-      text("Neo-Soul", 0 + 300, 0 + 215);
+      // text("Neo-Soul", 0 + 300, 0 + 215);
     }
 
-    
-    
-    drawAxis();
+    translate(0, 0, -200);
   }
+
+  pointLight(255, 255, 255, mouseX-innerWidth/2, mouseY-innerHeight/2, 200);
 }
 
 function drawAxis() {
@@ -236,26 +244,69 @@ function drawAxis() {
 }
 
 function drawPixelCircle(radius, boxSize, r, g, b) {
-  fill(r, g, b);
+  
 
   var max = 1 + 2 * (radius - 1);
 
+  stroke(255);
   var a = max;
   var b = 1;
+  ambientMaterial(55, 0, 255);
+
   for (level = 1; level <= radius; level++)
   {
-    rect(0+a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
-    rect(0-a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
-    rect(0-a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
-    rect(0+a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
+    push();
+    fill(r, g, b);
+    if (r == 255)
+      translate(a*boxSize/2, -b*boxSize/2, 25);
+    else
+      translate(a*boxSize/2, -b*boxSize/2);
+    box(boxSize);
+    pop();
+
+    push();
+    fill(r, g, b);
+    if (r == 255)
+      translate(-a*boxSize/2, -b*boxSize/2, 25);
+    else
+      translate(-a*boxSize/2, -b*boxSize/2);
+    box(boxSize);
+    pop();
+
+    push();
+    fill(r, g, b);
+    if (r == 255)
+      translate(-a*boxSize/2, b*boxSize/2, 25);
+    else
+      translate(-a*boxSize/2, b*boxSize/2);
+    box(boxSize);
+    pop();
+
+    push();
+    fill(r, g, b);
+    if (r == 255)
+      translate(a*boxSize/2, b*boxSize/2, 25);
+    else
+      translate(a*boxSize/2, b*boxSize/2);
+    box(boxSize);
+    pop();
+
+    // rect(0+a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
+    // rect(0-a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
+    // rect(0-a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
+    // rect(0+a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
+
     a-=2; b+=2;
   }
+
+  normalMaterial();
 
   wave[radius] = {r, g, b};
 }
 
 // When the user clicks the mouse
 function mousePressed() {
+  wave[0] = {r: 255, g: 255, b: 255};
 
   var bound_top;
   var bound_bot;
@@ -266,7 +317,9 @@ function mousePressed() {
   mouseY = mouseY - innerHeight/2
 
   var d = dist(mouseX, mouseY, 0, 0);
+  console.log("dist: " + d);
   if (d < 50 && !loading) {
+    console.log("yay");
     playPauseDream();
   }
 
