@@ -44,7 +44,7 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 console.log("App built!");
-let str = fs.readFileSync("~/BitsOfBeats/public/images/txt/logo.txt",'utf8');
+let str = fs.readFileSync("public/images/txt/logo.txt",'utf8');
 
 console.log(str);
 
