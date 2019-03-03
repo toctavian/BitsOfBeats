@@ -1,11 +1,12 @@
 var canvas;
 
+var banner;
+
 var curve = 0;
 var time;
 var deviation = 0;
 var fade = 255;
 var drum_rnn = new mm.MusicRNN('/checkpoints/soul');
-// const drum_rnn = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn');
 var step = 1;
 
 var selectedGenre = 0;
@@ -92,6 +93,8 @@ function setup() {
   // frameRate(30);
   curve = 0;
 
+  banner = loadImage('/images/banner.png');
+
   console.log(wave);
 
   time = 0;
@@ -111,7 +114,7 @@ function setup() {
 }
 
 function draw() { 
-  background(174,220,192);
+  background(255);
   translate(innerWidth/2, innerHeight/2);
 
   if (wave.length <  200) {
@@ -154,7 +157,7 @@ function draw() {
     textSize(30);
     textAlign(CENTER, CENTER);
     
-    if (isPlaying) {
+    fill(0,0,50);
       text("Stop", 0, 0);
     } else {
       text("Play", 0, 0);
@@ -173,12 +176,12 @@ function draw() {
     } else {
       fill(255);
       rect(0 - 350, 0 + 200, 100, 30);
-      fill(174,220,192);
+      fill(0,0,50);
       text("Soul", 0 - 300, 0 + 215);
     }
 
     if (selectedGenre == 1) {
-      fill(174,220,192);
+      fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
       rect(0 - 150, 0 + 200, 100, 30);
@@ -188,12 +191,12 @@ function draw() {
     } else {
       fill(255);
       rect(0 - 150, 0 + 200, 100, 30);
-      fill(174,220,192);
+      fill(0,0,50);
       text("Rap", 0 - 100, 0 + 215);
     }
 
     if (selectedGenre == 2) {
-      fill(174,220,192);
+      fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
       rect(0 + 50, 0 + 200, 100, 30);
@@ -203,12 +206,12 @@ function draw() {
     } else {
       fill(255);
       rect(0 + 50, 0 + 200, 100, 30);
-      fill(174,220,192);
+      fill(0,0,50);
       text("R&B", 0 + 100, 0 + 215);
     }
 
     if (selectedGenre == 3) {
-      fill(174,220,192);
+      fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
       rect(0 + 250, 0 + 200, 100, 30);
@@ -218,11 +221,11 @@ function draw() {
     } else {
       fill(255);
       rect(0 + 250, 0 + 200, 100, 30);
-      fill(174,220,192);
+      fill(0,0,50);
       text("Neo-Soul", 0 + 300, 0 + 215);
     }
 
-    
+    image(banner, -banner.width / 4, -banner.height / 4 - 200, banner.width / 2, banner.height / 2);
     
     drawAxis();
   }
