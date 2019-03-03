@@ -128,9 +128,13 @@ function draw() {
     wave.unshift({r:0,g:0,b:0});
   }
 
-  for(i=1;i<wave.length;i++) {
-    drawPixelCircle(i, 25, wave[i].r, wave[i].g, wave[i].b);
+  push();
+  let pixelSize = 25;
+  translate(-pixelSize/2,-pixelSize/2);
+  for(i=6;i<wave.length;i++) {
+    drawPixelCircle(i, pixelSize, wave[i].r, wave[i].g, wave[i].b);
   }
+  pop();
   
   time++;
   if (time == 150) time=1;
@@ -226,7 +230,7 @@ function draw() {
       text("Neo-Soul", 0 + 300, 0 + 215);
     }
 
-    image(banner, -banner.width / 4, -banner.height / 4 - 200, banner.width / 2, banner.height / 2);
+    image(banner, -banner.width / 4, -banner.height / 4 - 250, banner.width / 2, banner.height / 2);
     
     drawAxis();
   }
@@ -240,22 +244,25 @@ function drawAxis() {
 }
 
 function drawPixelCircle(radius, boxSize, r, g, b) {
-  fill(r, g, b);
+  fill(r, g, 1.5*radius);
+  strokeWeight(1);
+  stroke(255,255,255,50);
 
-  var max = 1 + 2 * (radius - 1);
+  if (radius == 1) {
+    rect(0, 0, boxSize, boxSize);
+  } else {
+    for (level = 0; level <= radius; level++)
+    {
+      let a = level;
+      let b = radius - a;
+      rect(0+a*boxSize, 0-b*boxSize, boxSize, boxSize);
+      rect(0-a*boxSize, 0-b*boxSize, boxSize, boxSize);
+      rect(0-b*boxSize, 0+a*boxSize, boxSize, boxSize);
+      rect(0+b*boxSize, 0+a*boxSize, boxSize, boxSize);
+    }
 
-  var a = max;
-  var b = 1;
-  for (level = 1; level <= radius; level++)
-  {
-    rect(0+a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
-    rect(0-a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
-    rect(0-a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
-    rect(0+a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
-    a-=2; b+=2;
+    wave[radius] = {r,g,b};
   }
-
-  wave[radius] = {r, g, b};
 }
 
 // When the user clicks the mouse
