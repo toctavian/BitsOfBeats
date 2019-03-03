@@ -158,6 +158,7 @@ function draw() {
     textAlign(CENTER, CENTER);
     
     fill(0,0,50);
+    if (isPlaying) {
       text("Stop", 0, 0);
     } else {
       text("Play", 0, 0);
