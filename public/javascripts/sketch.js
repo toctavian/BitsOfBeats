@@ -167,7 +167,7 @@ function draw() {
     textSize(20);
 
     if (selectedGenre == 0) {
-      fill(174,220,192);
+      fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
       rect(0 - 350, 0 + 200, 100, 30);
