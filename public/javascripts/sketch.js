@@ -124,7 +124,7 @@ function draw() {
   translate(innerWidth/2, innerHeight/2);
   textAlign(CENTER, CENTER);
 
-  if (wave.length <  150) {
+  if (wave.length <  60) {
     wave.unshift({
       r: 0,
       g: 0,
@@ -144,7 +144,7 @@ function draw() {
   pop();
   
   time++;
-  if (time == 150) time=1;
+  if (time == 60) time=1;
 
   
   if(loading) {
