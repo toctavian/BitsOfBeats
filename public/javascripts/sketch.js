@@ -353,3 +353,9 @@ function mousePressed() {
   console.log("mouseX: " + mouseX + "; mouseY: " + mouseY + ";");
   console.log("bound_left: " + bound_left + "; bound_right: " + bound_right + "; bound_top: " + bound_top + "; bound_bot: " + bound_bot + ";");
 }
+
+function keyPressed() {
+  if (keyCode == 32) {
+    playPauseDream();
+  }
+}
