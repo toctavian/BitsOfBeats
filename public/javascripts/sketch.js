@@ -94,7 +94,7 @@ function neoSoul() {
 
 function setup() {
   canvas = createCanvas(innerWidth, innerHeight);  
-  // frameRate(30);
+  frameRate(30);
   curve = 0;
 
   banner = loadImage('/images/banner.png');
@@ -118,13 +118,11 @@ function setup() {
 }
 
 function draw() { 
-  let start = millis();
-
   background(255);
   translate(innerWidth/2, innerHeight/2);
   textAlign(CENTER, CENTER);
 
-  if (wave.length <  60) {
+  if (wave.length <  innerWidth/pixelSize) {
     wave.unshift({
       r: 0,
       g: 0,
@@ -144,7 +142,7 @@ function draw() {
   pop();
   
   time++;
-  if (time == 60) time=1;
+  if (time == innerWidth/pixelSize) time=1;
 
   
   if(loading) {
@@ -243,10 +241,6 @@ function draw() {
 
     image(banner, -banner.width / 4, -banner.height / 4 - 250, banner.width / 2, banner.height / 2);
   }
-
-  let end = millis();
-  let elapsed = end - start;
-  console.log("This took: " + elapsed + "ms.")
 }
 
 function drawPixelCircle(radius, boxSize, r, g, b) {
@@ -261,10 +255,12 @@ function drawPixelCircle(radius, boxSize, r, g, b) {
     {
       let a = level;
       let b = radius - a;
-      rect(0+a*boxSize, 0-b*boxSize, boxSize, boxSize);
-      rect(0-a*boxSize, 0-b*boxSize, boxSize, boxSize);
-      rect(0-b*boxSize, 0+a*boxSize, boxSize, boxSize);
-      rect(0+b*boxSize, 0+a*boxSize, boxSize, boxSize);
+      if (a * boxSize <= innerWidth/2 && b * boxSize <= innerWidth/2) {
+        rect( a*boxSize, -b*boxSize, boxSize, boxSize);
+        rect(-a*boxSize, -b*boxSize, boxSize, boxSize);
+        rect(-b*boxSize,  a*boxSize, boxSize, boxSize);
+        rect( b*boxSize,  a*boxSize, boxSize, boxSize);
+      }
     }
 
     wave[radius] = {r,g,b};
