@@ -1,12 +1,14 @@
 var canvas;
 
+var banner;
+
 var curve = 0;
 var time;
 var deviation = 0;
 var fade = 255;
 var drum_rnn = new mm.MusicRNN('/checkpoints/soul');
-// const drum_rnn = new mm.MusicRNN('https://storage.googleapis.com/magentadata/js/checkpoints/music_rnn/drum_kit_rnn');
 var step = 1;
+var pixelSize = 25;
 
 var selectedGenre = 0;
 var drumSamples;
@@ -35,8 +37,11 @@ function playPauseDream() {
 function playDream() {
   var drumPart = new Tone.Part(function(time, value){
     drumSamples.get(value.note).start();
-    if (value.note == 36)
-      wave[0] = {r: 255, g: 255, b: 255};
+    if (value.note == 36) {
+      wave[4] = {r: 150, g: 150, b: 150};
+      wave[5] = {r: 200, g: 200, b: 200};
+      wave[6] = {r: 255, g: 255, b: 255};
+    }
   }, pattern).start("0");
   drumPart.loop = true;
 
@@ -92,6 +97,8 @@ function setup() {
   // frameRate(30);
   curve = 0;
 
+  banner = loadImage('/images/banner.png');
+
   console.log(wave);
 
   time = 0;
@@ -111,10 +118,13 @@ function setup() {
 }
 
 function draw() { 
-  background(174,220,192);
-  translate(innerWidth/2, innerHeight/2);
+  let start = millis();
 
-  if (wave.length <  200) {
+  background(255);
+  translate(innerWidth/2, innerHeight/2);
+  textAlign(CENTER, CENTER);
+
+  if (wave.length <  60) {
     wave.unshift({
       r: 0,
       g: 0,
@@ -125,12 +135,16 @@ function draw() {
     wave.unshift({r:0,g:0,b:0});
   }
 
-  for(i=1;i<wave.length;i++) {
-    drawPixelCircle(i, 25, wave[i].r, wave[i].g, wave[i].b);
+
+  push();
+  translate(-pixelSize/2,-pixelSize/2);
+  for(i=6;i<wave.length;i++) {
+    drawPixelCircle(i, pixelSize, wave[i].r, wave[i].g, wave[i].b);
   }
+  pop();
   
   time++;
-  if (time == 150) time=1;
+  if (time == 60) time=1;
 
   
   if(loading) {
@@ -152,18 +166,18 @@ function draw() {
     fill(174,220,192);
     // textFont(font);
     textSize(30);
-    textAlign(CENTER, CENTER);
     
-    if (isPlaying) {
-      text("Stop", 0, 0);
-    } else {
-      text("Play", 0, 0);
-    }
+    fill(0,0,50);
+    
+    push();
+    translate(-pixelSize/2,-pixelSize/2);
+    drawPlayPause(pixelSize);
+    pop();
 
     textSize(20);
 
     if (selectedGenre == 0) {
-      fill(174,220,192);
+      fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
       rect(0 - 350, 0 + 200, 100, 30);
@@ -173,12 +187,12 @@ function draw() {
     } else {
       fill(255);
       rect(0 - 350, 0 + 200, 100, 30);
-      fill(174,220,192);
+      fill(0,0,50);
       text("Soul", 0 - 300, 0 + 215);
     }
 
     if (selectedGenre == 1) {
-      fill(174,220,192);
+      fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
       rect(0 - 150, 0 + 200, 100, 30);
@@ -188,12 +202,12 @@ function draw() {
     } else {
       fill(255);
       rect(0 - 150, 0 + 200, 100, 30);
-      fill(174,220,192);
+      fill(0,0,50);
       text("Rap", 0 - 100, 0 + 215);
     }
 
     if (selectedGenre == 2) {
-      fill(174,220,192);
+      fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
       rect(0 + 50, 0 + 200, 100, 30);
@@ -203,12 +217,12 @@ function draw() {
     } else {
       fill(255);
       rect(0 + 50, 0 + 200, 100, 30);
-      fill(174,220,192);
+      fill(0,0,50);
       text("R&B", 0 + 100, 0 + 215);
     }
 
     if (selectedGenre == 3) {
-      fill(174,220,192);
+      fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
       rect(0 + 250, 0 + 200, 100, 30);
@@ -218,41 +232,75 @@ function draw() {
     } else {
       fill(255);
       rect(0 + 250, 0 + 200, 100, 30);
-      fill(174,220,192);
+      fill(0,0,50);
       text("Neo-Soul", 0 + 300, 0 + 215);
     }
 
-    
-    
-    drawAxis();
-  }
-}
+    let fps = frameRate();
+    fill(0);
+    stroke(0);
+    text("FPS: " + fps.toFixed(2), -50, 0);
 
-function drawAxis() {
-  fill(255,0,0);
-  line(0, 0, innerWidth, 0);
-  fill(0,0,255);
-  line(0, 0, 0, innerHeight);
+    image(banner, -banner.width / 4, -banner.height / 4 - 250, banner.width / 2, banner.height / 2);
+  }
+
+  let end = millis();
+  let elapsed = end - start;
+  console.log("This took: " + elapsed + "ms.")
 }
 
 function drawPixelCircle(radius, boxSize, r, g, b) {
-  fill(r, g, b);
+  fill(r, g, 1.5*radius);
+  strokeWeight(1);
+  stroke(255,255,255,50);
 
-  var max = 1 + 2 * (radius - 1);
+  if (radius == 1) {
+    rect(0, 0, boxSize, boxSize);
+  } else {
+    for (level = 0; level <= radius; level++)
+    {
+      let a = level;
+      let b = radius - a;
+      rect(0+a*boxSize, 0-b*boxSize, boxSize, boxSize);
+      rect(0-a*boxSize, 0-b*boxSize, boxSize, boxSize);
+      rect(0-b*boxSize, 0+a*boxSize, boxSize, boxSize);
+      rect(0+b*boxSize, 0+a*boxSize, boxSize, boxSize);
+    }
 
-  var a = max;
-  var b = 1;
-  for (level = 1; level <= radius; level++)
-  {
-    rect(0+a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
-    rect(0-a*boxSize/2, 0-b*boxSize/2, boxSize, boxSize);
-    rect(0-a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
-    rect(0+a*boxSize/2, 0+b*boxSize/2, boxSize, boxSize);
-    a-=2; b+=2;
+    wave[radius] = {r,g,b};
   }
-
-  wave[radius] = {r, g, b};
 }
+
+function drawPlayPause(boxSize) { 
+  fill(0, 0, 0); 
+ 
+  if (isPlaying) { 
+    // PAUSE 
+    rect(+boxSize, -2*boxSize, boxSize, boxSize); 
+    rect(+boxSize, -boxSize, boxSize, boxSize);
+    rect(+boxSize, 0, boxSize, boxSize); 
+    rect(+boxSize, +boxSize, boxSize, boxSize); 
+    rect(+boxSize, +2*boxSize, boxSize, boxSize); 
+ 
+    rect(-boxSize, 0, boxSize, boxSize); 
+    rect(-boxSize, +boxSize, boxSize, boxSize);
+    rect(-boxSize, -boxSize, boxSize, boxSize);
+    rect(-boxSize, -2*boxSize, boxSize, boxSize); 
+    rect(-boxSize, +2*boxSize, boxSize, boxSize); 
+  } else { 
+    rect(0, 0, boxSize, boxSize); 
+    rect(0, +boxSize, boxSize, boxSize);
+    rect(0, -boxSize, boxSize, boxSize);
+    rect(0, -2*boxSize, boxSize, boxSize); 
+    rect(0, +2*boxSize, boxSize, boxSize);
+    
+    rect(boxSize, 0, boxSize, boxSize); 
+    rect(boxSize, +boxSize, boxSize, boxSize);
+    rect(boxSize, -boxSize, boxSize, boxSize);
+
+    rect(2*boxSize, 0, boxSize, boxSize);
+  }  
+} 
 
 // When the user clicks the mouse
 function mousePressed() {
