@@ -45,11 +45,12 @@ function playDream() {
   }, pattern).start("0");
   drumPart.loop = true;
 
-  Tone.Transport.bpm.value = 70;
+  Tone.Transport.bpm.value = 90;
   Tone.Transport.start("+0.1");
 }
 
 function updateSequence() {
+  pattern = [];
   const sequenceInfo = {notes:[42], quantizationInfo: {stepsPerQuarter: 4}};
   drum_rnn.continueSequence(sequenceInfo, 16, 1.3).then((dream) => {
     for (var i = 0; i < dream.notes.length; i++) {
@@ -104,13 +105,13 @@ function setup() {
   time = 0;
   
   drumSamples = new Tone.Players({
-    36 : '/sounds/drum-kits/dubstep/kick.mp3',
-    38 : '/sounds/drum-kits/dubstep/snare.mp3',
-    42 : '/sounds/drum-kits/dubstep/tom-low.mp3',
-    45 : '/sounds/drum-kits/dubstep/tom-mid.mp3',
-    49 : '/sounds/drum-kits/dubstep/tom-high.mp3',
-    50 : '/sounds/drum-kits/dubstep/hihat-closed.mp3',
-    51 : '/sounds/drum-kits/dubstep/hihat-open.mp3'
+    36 : '/sounds/drum-kits/rap/kick.wav',
+    38 : '/sounds/drum-kits/rap/snare-1.wav',
+    42 : '/sounds/drum-kits/rap/tom-low.wav',
+    45 : '/sounds/drum-kits/rap/tom-mid.wav',
+    49 : '/sounds/drum-kits/rap/tom-high.wav',
+    50 : '/sounds/drum-kits/rap/hihat-closed.wav',
+    51 : '/sounds/drum-kits/rap/hihat-open.wav'
   }, function() {
     console.log(drumSamples);
     updateSequence();
@@ -148,7 +149,7 @@ function draw() {
   if(loading) {
     noFill();
     
-    stroke(255);
+    stroke(0);
     strokeWeight(4);
     arc(0, 0, 100, 100, 5*PI/3 + loadingRoation, PI/3 + loadingRoation);
 
@@ -178,60 +179,60 @@ function draw() {
       fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
-      rect(0 - 350, 0 + 200, 100, 30);
+      rect(-350, 200, 100, 30);
       fill(255);
       noStroke();
-      text("Soul", 0 - 300, 0 + 215);
+      text("Soul", -300, 215);
     } else {
       fill(255);
-      rect(0 - 350, 0 + 200, 100, 30);
+      rect(-350, 200, 100, 30);
       fill(0,0,50);
-      text("Soul", 0 - 300, 0 + 215);
+      text("Soul", -300, 215);
     }
 
     if (selectedGenre == 1) {
       fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
-      rect(0 - 150, 0 + 200, 100, 30);
+      rect(-150, 200, 100, 30);
       fill(255);
       noStroke();
-      text("Rap", 0 - 100, 0 + 215);
+      text("Rap", -100, 215);
     } else {
       fill(255);
-      rect(0 - 150, 0 + 200, 100, 30);
+      rect(-150, 200, 100, 30);
       fill(0,0,50);
-      text("Rap", 0 - 100, 0 + 215);
+      text("Rap", -100, 215);
     }
 
     if (selectedGenre == 2) {
       fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
-      rect(0 + 50, 0 + 200, 100, 30);
+      rect(50, 200, 100, 30);
       fill(255);
       noStroke();
-      text("R&B", 0 + 100, 0 + 215);
+      text("R&B", 100, 215);
     } else {
       fill(255);
-      rect(0 + 50, 0 + 200, 100, 30);
+      rect(50, 200, 100, 30);
       fill(0,0,50);
-      text("R&B", 0 + 100, 0 + 215);
+      text("R&B", 100, 215);
     }
 
     if (selectedGenre == 3) {
       fill(0,0,0,0);
       stroke(255);
       strokeWeight(2);
-      rect(0 + 250, 0 + 200, 100, 30);
+      rect(250, 200, 100, 30);
       fill(255);
       noStroke();
-      text("Neo-Soul", 0 + 300, 0 + 215);
+      text("Neo-Soul", 300, 215);
     } else {
       fill(255);
-      rect(0 + 250, 0 + 200, 100, 30);
+      rect(250, 200, 100, 30);
       fill(0,0,50);
-      text("Neo-Soul", 0 + 300, 0 + 215);
+      text("Neo-Soul", 300, 215);
     }
 
     // let fps = frameRate();
@@ -244,7 +245,21 @@ function draw() {
 }
 
 function drawPixelCircle(radius, boxSize, r, g, b) {
-  fill(r, g, 1.5*radius);
+  switch(selectedGenre) {
+    case 0:
+      fill(r, g, 1.5*radius);
+      break;
+    case 1:
+      fill(r, 1.5*radius, 1.5*radius);
+      break;
+    case 2:
+      fill(1.5*radius, g, b);
+      break;
+    case 3:
+      fill(r, 1.5*radius, b);
+      break;
+  }
+  
   strokeWeight(1);
   stroke(255,255,255,50);
 
@@ -284,6 +299,7 @@ function drawPlayPause(boxSize) {
     rect(-boxSize, -2*boxSize, boxSize, boxSize); 
     rect(-boxSize, +2*boxSize, boxSize, boxSize); 
   } else { 
+    // PLAY
     rect(0, 0, boxSize, boxSize); 
     rect(0, +boxSize, boxSize, boxSize);
     rect(0, -boxSize, boxSize, boxSize);
@@ -314,44 +330,41 @@ function mousePressed() {
     playPauseDream();
   }
 
-  bound_top = 0 + 200;
-  bound_bot = 0 + 230;
-  bound_left = 0 - 350;
-  bound_right = 0 - 250;
+  bound_top = 200;
+  bound_bot = 230;
+  bound_left = -350;
+  bound_right = -250;
   if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
     console.log("soul");
     soul();
   }
 
-  bound_top = 0 + 200;
-  bound_bot = 0 + 230;
-  bound_left = 0 - 150;
-  bound_right = 0 - 50;
+  bound_top = 200;
+  bound_bot = 230;
+  bound_left = -150;
+  bound_right = -50;
   if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
     console.log("rap");
     rap();
   }
 
-  bound_top = 0 + 200;
-  bound_bot = 0 + 230;
-  bound_left = 0 + 50;
-  bound_right = 0 + 150;
+  bound_top = 200;
+  bound_bot = 230;
+  bound_left = 50;
+  bound_right = 150;
   if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
     console.log("rnb");
     rnb();
   }
 
-  bound_top = 0 + 200;
-  bound_bot = 0 + 230;
-  bound_left = 0 + 250;
-  bound_right = 0 + 350;
+  bound_top = 200;
+  bound_bot = 230;
+  bound_left = 250;
+  bound_right = 350;
   if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
     console.log("neo-soul");
     neoSoul();
   }
-
-  console.log("mouseX: " + mouseX + "; mouseY: " + mouseY + ";");
-  console.log("bound_left: " + bound_left + "; bound_right: " + bound_right + "; bound_top: " + bound_top + "; bound_bot: " + bound_bot + ";");
 }
 
 function keyPressed() {
