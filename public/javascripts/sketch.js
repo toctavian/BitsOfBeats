@@ -236,10 +236,10 @@ function draw() {
       text("Neo-Soul", 0 + 300, 0 + 215);
     }
 
-    let fps = frameRate();
-    fill(0);
-    stroke(0);
-    text("FPS: " + fps.toFixed(2), -50, 0);
+    // let fps = frameRate();
+    // fill(0);
+    // stroke(0);
+    // text("FPS: " + fps.toFixed(2), -50, 0);
 
     image(banner, -banner.width / 4, -banner.height / 4 - 250, banner.width / 2, banner.height / 2);
   }
