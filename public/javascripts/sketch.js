@@ -45,12 +45,35 @@ function playDream() {
   }, pattern).start("0");
   drumPart.loop = true;
 
-  Tone.Transport.bpm.value = 90;
+  let bpm;
+  switch(selectedGenre) {
+    case 0:
+      // soul - 75-90
+      bpm = 70 + getRandomInt(15);
+      break;
+    case 1:
+      // rap - 85-115
+      bpm = 85 + getRandomInt(30);
+      break;
+    case 2:
+      // rnb - 100-130
+      bpm = 100 + getRandomInt(30);
+      break;
+    case 3:
+      // neo-soul - 80-95
+      bpm = 80 + getRandomInt(15);
+      break;
+    default:
+      bpm = 90;
+      break;
+  }
+
+  console.log(bpm);
+  Tone.Transport.bpm = bpm;
   Tone.Transport.start("+0.1");
 }
 
 function updateSequence() {
-  pattern = [];
   const sequenceInfo = {notes:[42], quantizationInfo: {stepsPerQuarter: 4}};
   drum_rnn.continueSequence(sequenceInfo, 16, 1.3).then((dream) => {
     for (var i = 0; i < dream.notes.length; i++) {
@@ -71,24 +94,32 @@ function updateSequence() {
 function soul() {
   drum_rnn = new mm.MusicRNN('/checkpoints/soul');
   selectedGenre = 0;
-  updateSequence();
+  resetMusic();
 }
 
 function rap() {
   drum_rnn = new mm.MusicRNN('/checkpoints/rap');
   selectedGenre = 1;
-  updateSequence();
+  resetMusic();
 }
 
 function rnb() {
   drum_rnn = new mm.MusicRNN('/checkpoints/rnb');
   selectedGenre = 2;
-  updateSequence();
+  resetMusic();
 }
 
 function neoSoul() {
   drum_rnn = new mm.MusicRNN('/checkpoints/neo-soul');
   selectedGenre = 3;
+  resetMusic();
+}
+
+function resetMusic() {
+  isPlaying = false;
+  pattern = [];
+  Tone.Transport.stop();
+  Tone.Transport.cancel();
   updateSequence();
 }
 
@@ -371,4 +402,12 @@ function keyPressed() {
   if (keyCode == 32) {
     playPauseDream();
   }
+}
+
+function windowResized(){
+  resizeCanvas(windowWidth, windowHeight);
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
 }
