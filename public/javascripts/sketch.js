@@ -26,24 +26,30 @@ var isPlaying = false;
 function playPauseDream() {
   if(isPlaying) {
     Tone.Transport.pause();
-  }
+  } else {
   else
     playDream();
+  }
 
   isPlaying = !isPlaying;
 }
 
 function playDream() {
-  var drumPart = new Tone.Part(function(time, value){
-    drumSamples.get(value.note).start();
-    if (value.note == 36) {
-      wave[3] = {r: 0, g: 0, b: 0};
-      wave[4] = {r: 150, g: 150, b: 150};
-      wave[5] = {r: 200, g: 200, b: 200};
-      wave[6] = {r: 255, g: 255, b: 255};
+  var drumPart = new Tone.Part(function(atTime, value){
+    try {
+      drumSamples.get(value.note).start(atTime);
+      if (value.note == 36) {
+        wave[3] = {r: 0, g: 0, b: 0};
+        wave[4] = {r: 150, g: 150, b: 150};
+        wave[5] = {r: 200, g: 200, b: 200};
+        wave[6] = {r: 255, g: 255, b: 255};
+      }
+    } catch(error) {
+      console.error(error);
     }
-  }, pattern).start("0");
+  }, pattern);
   drumPart.loop = true;
+  drumPart.start("0");
 
   let bpm;
   switch(selectedGenre) {
@@ -68,9 +74,13 @@ function playDream() {
       break;
   }
 
-  console.log(bpm);
   Tone.Transport.bpm = bpm;
-  Tone.Transport.start("+0.1");
+  if (Tone.context.state !== 'running') {
+    Tone.context.resume();
+  }
+  Tone.Transport.start("0");
+
+  console.log(Tone.Transport.state);
 }
 
 function updateSequence() {
@@ -138,13 +148,10 @@ function setup() {
   frameRate(30);
   rectMode(CENTER, CENTER);
   curve = 0;
+  time = 0;
 
   banner = loadImage('/images/banner.png');
 
-  console.log(wave);
-
-  time = 0;
-  
   drumSamples = new Tone.Players({
     36 : '/sounds/drum-kits/rap/kick.wav',
     38 : '/sounds/drum-kits/rap/snare-1.wav',
@@ -409,7 +416,7 @@ function mousePressed() {
     neoSoul();
   }
 
-  console.log("mouseX: " + mouseX + "; mouseY: " + mouseY + ";"); 
+  // console.log("mouseX: " + mouseX + "; mouseY: " + mouseY + ";"); 
 }
 
 function keyPressed() {
