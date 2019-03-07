@@ -27,7 +27,6 @@ function playPauseDream() {
   if(isPlaying) {
     Tone.Transport.pause();
   } else {
-  else
     playDream();
   }
 
