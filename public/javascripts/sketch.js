@@ -77,9 +77,12 @@ function playDream() {
   if (Tone.context.state !== 'running') {
     Tone.context.resume();
   }
-  Tone.Transport.start("0");
-
   console.log(Tone.Transport.state);
+  if (Tone.Transport.state == 'paused') {
+    Tone.Transport.toggle();
+  } else {
+    Tone.Transport.start("0");
+  }
 }
 
 function updateSequence() {
@@ -128,7 +131,7 @@ function resetMusic() {
   isPlaying = false;
   wave = [];
   pattern = [];
-  Tone.Transport.stop();
+  Tone.Transport.toggle();
   Tone.Transport.cancel();
   updateSequence();
 }
