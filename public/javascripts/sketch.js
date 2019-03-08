@@ -368,6 +368,7 @@ function drawPlayPause(boxSize) {
 
 // When the user clicks the mouse
 function mousePressed() {
+  if (event.type != 'touchstart') return true;
 
   var bound_top;
   var bound_bot;
