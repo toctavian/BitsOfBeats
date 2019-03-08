@@ -195,7 +195,7 @@ function draw() {
   
   if(loading) {
     noFill();
-    
+    clearPlayButton();
     stroke(0);
     strokeWeight(4);
     arc(0, 0, 100, 100, 5*PI/3 + loadingRoation, PI/3 + loadingRoation);
@@ -366,8 +366,17 @@ function drawPlayPause(boxSize) {
   }  
 } 
 
+function mouseReleased(){
+	released = true;
+	return false;
+}
+
 // When the user clicks the mouse
 function mousePressed() {
+  if(!released){
+		return;
+	}
+	released = false;
 
   var bound_top;
   var bound_bot;
