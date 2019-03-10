@@ -206,84 +206,82 @@ function draw() {
     loadingRoation += PI/20;
     if(loadingRoation == 3*TWO_PI) loadingRoation = 0;
   } else {
-    noStroke();
-    fill(174,220,192);
-    textSize(30);
-    
-    fill(0,0,50);
-    
     push();
     drawPlayPause(pixelSize);
     pop();
-
-    textSize(20);
-    if (selectedGenre == 0) {
-      fill(0,0,0,0);
-      stroke(255);
-      strokeWeight(2);
-      rect(-300, 280, 100, 30);
-      fill(255);
-      noStroke();
-      text("Soul", -300, 280);
-    } else {
-      fill(255);
-      rect(-300, 280, 100, 30);
-      fill(0,0,50);
-      text("Soul", -300, 280);
-    }
-
-    if (selectedGenre == 1) {
-      fill(0,0,0,0);
-      stroke(255);
-      strokeWeight(2);
-      rect(-100, 280, 100, 30);
-      fill(255);
-      noStroke();
-      text("Rap", -100, 280);
-    } else {
-      fill(255);
-      rect(-100, 280, 100, 30);
-      fill(0,0,50);
-      text("Rap", -100, 280);
-    }
-
-    if (selectedGenre == 2) {
-      fill(0,0,0,0);
-      stroke(255);
-      strokeWeight(2);
-      rect(100, 280, 100, 30);
-      fill(255);
-      noStroke();
-      text("R&B", 100, 280);
-    } else {
-      fill(255);
-      rect(100, 280, 100, 30);
-      fill(0,0,50);
-      text("R&B", 100, 280);
-    }
-
-    if (selectedGenre == 3) {
-      fill(0,0,0,0);
-      stroke(255);
-      strokeWeight(2);
-      rect(300, 280, 100, 30);
-      fill(255);
-      noStroke();
-      text("Neo-Soul", 300, 280);
-    } else {
-      fill(255);
-      rect(300, 280, 100, 30);
-      fill(0,0,50);
-      text("Neo-Soul", 300, 280);
-    }
-
-    // let fps = frameRate();
-    // fill(0);
-    // stroke(0);
-    // text("FPS: " + fps.toFixed(2), -50, 0);
-
-    image(banner, -banner.width / 4, -banner.height / 4 - 300, banner.width / 2, banner.height / 2);
   }
+
+  noStroke();
+  textSize(30);
+  fill(0,0,50);
+
+  textSize(20);
+  if (selectedGenre == 0) {
+    fill(0,0,0,0);
+    stroke(255);
+    strokeWeight(2);
+    rect(-300, 280, 100, 30);
+    fill(255);
+    noStroke();
+    text("Soul", -300, 280);
+  } else {
+    fill(255);
+    rect(-300, 280, 100, 30);
+    fill(0,0,50);
+    text("Soul", -300, 280);
+  }
+
+  if (selectedGenre == 1) {
+    fill(0,0,0,0);
+    stroke(255);
+    strokeWeight(2);
+    rect(-100, 280, 100, 30);
+    fill(255);
+    noStroke();
+    text("Rap", -100, 280);
+  } else {
+    fill(255);
+    rect(-100, 280, 100, 30);
+    fill(0,0,50);
+    text("Rap", -100, 280);
+  }
+
+  if (selectedGenre == 2) {
+    fill(0,0,0,0);
+    stroke(255);
+    strokeWeight(2);
+    rect(100, 280, 100, 30);
+    fill(255);
+    noStroke();
+    text("R&B", 100, 280);
+  } else {
+    fill(255);
+    rect(100, 280, 100, 30);
+    fill(0,0,50);
+    text("R&B", 100, 280);
+  }
+
+  if (selectedGenre == 3) {
+    fill(0,0,0,0);
+    stroke(255);
+    strokeWeight(2);
+    rect(300, 280, 100, 30);
+    fill(255);
+    noStroke();
+    text("Neo-Soul", 300, 280);
+  } else {
+    fill(255);
+    rect(300, 280, 100, 30);
+    fill(0,0,50);
+    text("Neo-Soul", 300, 280);
+  }
+
+  // let fps = frameRate();
+  // fill(0);
+  // stroke(0);
+  // text("FPS: " + fps.toFixed(2), -50, 0);
+
+  image(banner, -banner.width / 4, -banner.height / 4 - 300, banner.width / 2, banner.height / 2);
 }
 
 function drawPixelCircle(radius, boxSize, r, g, b) {
@@ -336,6 +334,7 @@ function drawAxis() {
 
 function drawPlayPause(boxSize) { 
   clearPlayButton();
+  noStroke();
   fill(0, 0, 0); 
  
   if (isPlaying) { 
@@ -392,40 +391,42 @@ function mousePressed() {
     playPauseDream();
   }
 
-  bound_top = 270;
-  bound_bot = 300;
-  bound_left = -350;
-  bound_right = -250;
-  if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
-    console.log("soul");
-    soul();
-  }
+  if (!loading) {
+    bound_top = 270;
+    bound_bot = 300;
+    bound_left = -350;
+    bound_right = -250;
+    if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
+      console.log("soul");
+      soul();
+    }
 
-  bound_top = 270;
-  bound_bot = 300;
-  bound_left = -150;
-  bound_right = -50;
-  if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
-    console.log("rap");
-    rap();
-  }
+    bound_top = 270;
+    bound_bot = 300;
+    bound_left = -150;
+    bound_right = -50;
+    if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
+      console.log("rap");
+      rap();
+    }
 
-  bound_top = 270;
-  bound_bot = 300;
-  bound_left = 50;
-  bound_right = 150;
-  if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
-    console.log("rnb");
-    rnb();
-  }
+    bound_top = 270;
+    bound_bot = 300;
+    bound_left = 50;
+    bound_right = 150;
+    if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
+      console.log("rnb");
+      rnb();
+    }
 
-  bound_top = 270;
-  bound_bot = 300;
-  bound_left = 250;
-  bound_right = 350;
-  if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
-    console.log("neo-soul");
-    neoSoul();
+    bound_top = 270;
+    bound_bot = 300;
+    bound_left = 250;
+    bound_right = 350;
+    if (mouseX >= bound_left && mouseX <= bound_right && mouseY >= bound_top && mouseY <= bound_bot){
+      console.log("neo-soul");
+      neoSoul();
+    }
   }
 
   // console.log("mouseX: " + mouseX + "; mouseY: " + mouseY + ";"); 
