@@ -86,6 +86,7 @@ function playDream() {
 }
 
 function updateSequence() {
+  loading = true;
   const sequenceInfo = {notes:[42], quantizationInfo: {stepsPerQuarter: 4}};
   drum_rnn.continueSequence(sequenceInfo, 16, 1.5).then((dream) => {
     for (var i = 0; i < dream.notes.length; i++) {
