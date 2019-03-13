@@ -73,7 +73,7 @@ function playDream() {
       break;
   }
 
-  Tone.Transport.bpm = bpm;
+  Tone.Transport.bpm.value = bpm;
   if (Tone.context.state !== 'running') {
     Tone.context.resume();
   }
