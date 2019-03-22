@@ -60,6 +60,7 @@ function playDream() {
 
   var bassPart = new Tone.Part(function(atTime, value) {
     try {
+      console.log(value.note, value.duration);
       synth.volume.value = bassVolumeSlider.value() - 100;
       synth.triggerAttackRelease(value.note, value.duration, atTime);
     } catch(error) {
@@ -67,7 +68,7 @@ function playDream() {
     }
   }, bass_pattern);
   bassPart.loop = true;
-  bassPart.loopEnd = "2m";
+  bassPart.loopEnd = "2:0:0";
   bassPart.start("0");
 
   let bpm;
@@ -104,7 +105,7 @@ function playDream() {
 }
 
 function mapPitchToNote(pitch) {
-  return Tone.Frequency(pitch, "midi").transpose(-21).toFrequency();
+  return Tone.Frequency(pitch, "midi").transpose(-24).toFrequency();
 }
 
 async function updateSequence() {
@@ -125,20 +126,22 @@ async function updateSequence() {
 
   dream = await improv_rnn.continueSequence(
     buildNoteSequence([{ note: 60, time: Tone.now() }]),
-    20,
-    1.2,
+    8,
+    1.6,
     current_chord_prog
   );
   for (var i = 0; i < dream.notes.length; i++) {
-    let startStep = dream.notes[i].quantizedStartStep * 4;
-    let time = "0:" + Math.floor(startStep / 16) +
-      ":" + (startStep % 16);
+    let startStep = dream.notes[i].quantizedStartStep;
+    let time = Math.floor(startStep / 4) +
+      ":" + (startStep % 4) + ":0";
     let duration = dream.notes[i].quantizedEndStep - 
       dream.notes[i].quantizedStartStep;
 
+    duration = Math.floor(duration/4) + ":" + duration%4 + ":0";
+
     bass_pattern[i] = {
       note: mapPitchToNote(dream.notes[i].pitch),
-      duration: duration*bass_length + 'n',
+      duration: duration,
       time: time
     };
   }
@@ -267,15 +270,19 @@ async function setup() {
 
   var comp = new Tone.Compressor(-30, 3).toMaster();
 
-  synth = new Tone.Synth({
-    "oscillator" : {
-      "type" : "sine"
-   },
-   "envelope" : {
-     "attack" : 0.05,
-     "decay" : 0.02,
-     "release" : 1
-   }
+  synth = new Tone.FMSynth({
+    "harmonicity": 1,
+    "modulationIndex": 2,
+    "oscillator": {
+      "type": "sine"
+    },
+    "envelope": {
+      "attack" : 0.02,
+      "attackCurve": "sine",
+    },
+    "modulation": {
+      "type": "square"
+    }
   }).toMaster();
 
   drumSamples = new Tone.Players(
