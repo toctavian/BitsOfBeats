@@ -3,7 +3,8 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  res.set('Content-Type', 'application/xml');
+  res.send('sitemap/sitemap.xml');
 });
 
 module.exports = router;
