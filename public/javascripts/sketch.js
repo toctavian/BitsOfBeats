@@ -42,6 +42,7 @@ function playPauseDream() {
 }
 
 function playDream() {
+  wave = [];
   var drumPart = new Tone.Part(function(atTime, value){
     try {
       drumSamples.volume.value = drumsVolumeSlider.value() - 100;
