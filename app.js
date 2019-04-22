@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var fs = require('fs');
+var seo = require('express-seo')(app);
 
 var indexRouter = require('./routes/index');
 var sitemapRouter = require('./routes/sitemap');
@@ -40,6 +41,24 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// seo config
+
+seo.setConfig({
+  langs: ["en", "ro"]
+});
+
+seo.setDefaults({
+  html: "<a href='https://github.com/toctavian/BitsOfBeats'>Project on github</a>", 
+  title: "Bits of Beats", 
+  description: {
+      en: "Now there is a wasy to practice those fire lyrics without the need of paid samples. This AI generates pieces of beats, new with each generation, for free.",
+      ro: "Acum ai sansa sa exersezi versurile alea blanao pe care le-ai pastrat pentru viitoarele productii. Inteligenta artificiala integrata in acest site it ofera beaturi noi la fiecare apasare de buton."
+  },
+  image: "public/images/seo-banner.png"
+});
+
+// app done
 
 module.exports = app;
 
