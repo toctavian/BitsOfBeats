@@ -12,6 +12,7 @@ var improv_rnn = new mm.MusicRNN(
 );
 var banner, drumsLogo, bassLogo, genreLogo;
 var chord_progs, chord_json, current_chord_prog;
+var wavSamples;
 var pixelSize = 30;
 
 var selectedGenre = 0;
@@ -186,6 +187,7 @@ function soul() {
   selectedGenre = 0;
   Tone.Transport.swing.value = 0.5;
   resetMusic();
+  selectWavSamples();
 }
 
 function rap() {
@@ -193,6 +195,7 @@ function rap() {
   selectedGenre = 1;
   Tone.Transport.swing.value = 0;
   resetMusic();
+  selectWavSamples();
 }
 
 function rnb() {
@@ -200,6 +203,7 @@ function rnb() {
   selectedGenre = 2;
   Tone.Transport.swing.value = 1;
   resetMusic();
+  selectWavSamples();
 }
 
 function neoSoul() {
@@ -207,6 +211,7 @@ function neoSoul() {
   selectedGenre = 3;
   Tone.Transport.swing.value = 1;
   resetMusic();
+  selectWavSamples();
 }
 
 function resetMusic() {
@@ -268,6 +273,15 @@ async function setup() {
       current_chord_prog = chord_progs[Math.floor(Math.random() * chord_progs.length)];
     });
 
+  fetch("/javascripts/sample-mapping.json")
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(myJson) {
+      wavSamples = myJson;
+      selectWavSamples();
+    });
+
   var comp = new Tone.Compressor(-30, 3).toMaster();
 
   synth = new Tone.FMSynth({
@@ -284,16 +298,20 @@ async function setup() {
       "type": "square"
     }
   }).toMaster();
+}
 
+function selectWavSamples() {
   drumSamples = new Tone.Players(
     {
-      36: "/sounds/drum-kits/rap/kick.wav",
-      38: "/sounds/drum-kits/rap/snare-1.wav",
-      42: "/sounds/drum-kits/rap/tom-low.wav",
-      45: "/sounds/drum-kits/rap/tom-mid.wav",
-      49: "/sounds/drum-kits/rap/tom-high.wav",
-      50: "/sounds/drum-kits/rap/hihat-closed.wav",
-      51: "/sounds/drum-kits/rap/hihat-open.wav"
+      36: wavSamples[selectedGenre][0],
+      38: wavSamples[selectedGenre][5],
+      42: wavSamples[selectedGenre][2],
+      45: wavSamples[selectedGenre][3],
+      48: wavSamples[selectedGenre][1],
+      49: wavSamples[selectedGenre][7],
+      46: wavSamples[selectedGenre][4],
+      50: wavSamples[selectedGenre][5],
+      51: wavSamples[selectedGenre][6]
     },
     function() {
       updateSequence();

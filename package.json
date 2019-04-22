@@ -5,6 +5,12 @@
   "scripts": {
     "start": "node ./bin/www"
   },
+  "keywords": [
+    "bits", "of", "beats", "octavian",
+    "taranu", "toma", "taranu-toma",
+    "magenta", "generative", "music",
+    "machine", "learning", "rnn", "p5"
+  ],
   "dependencies": {
     "cookie-parser": "^1.4.4",
     "debug": "~2.6.9",
