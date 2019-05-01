@@ -62,7 +62,6 @@ function playDream() {
 
   var bassPart = new Tone.Part(function(atTime, value) {
     try {
-      console.log(value.note, value.duration);
       synth.volume.value = bassVolumeSlider.value() - 100;
       synth.triggerAttackRelease(value.note, value.duration, atTime);
     } catch(error) {
@@ -116,10 +115,14 @@ async function updateSequence() {
     notes: [42],
     quantizationInfo: { stepsPerQuarter: 4 }
   };
-  let dream = await drum_rnn.continueSequence(sequenceInfo, 16, 1.5);
+  let dream = await drum_rnn.continueSequence(sequenceInfo, 15, 1.5);
+  drum_pattern[0] = {
+    note: 36,
+    time: "0:0:0"
+  };
   for (var i = 0; i < dream.notes.length; i++) {
-    var time = "0:0:" + (dream.notes[i].quantizedStartStep % 16);
-    drum_pattern[i] = {
+    var time = "0:0:" + dream.notes[i].quantizedStartStep;
+    drum_pattern[i+1] = {
       note: dream.notes[i].pitch,
       time: time
     };
@@ -337,7 +340,7 @@ function draw() {
 
   // idea 2 - preserve background and only draw the "beat"
   for (i = 6; i < wave.length; i++) {
-    if (wave[i].r != null && wave[i].g != null && wave[i].b != null)
+    if (wave[i] != null && wave[i].r != null && wave[i].g != null && wave[i].b != null)
       drawPixelCircle(i, pixelSize, wave[i].r, wave[i].g, wave[i].b);
   }
 
